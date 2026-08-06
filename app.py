@@ -20,10 +20,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = os.path.join(BASE_DIR, "assets")
 
 FONT_PATH = os.path.join(ASSETS_DIR, "DejaVuSans.ttf")
-FORM_PRIMARY = os.path.join(ASSETS_DIR, "ראשי_ידני_לקלאוד.pdf")
-FORM_ADDITIONAL = os.path.join(ASSETS_DIR, "נוסף_ידני_לקלאוד.pdf")
-SIG_IMG = os.path.join(ASSETS_DIR, "קשקוש.png")
-STAMP_IMG = os.path.join(ASSETS_DIR, "סמי_ביטון.png")
+FORM_PRIMARY = os.path.join(ASSETS_DIR, "form_primary.pdf")
+FORM_ADDITIONAL = os.path.join(ASSETS_DIR, "form_additional.pdf")
+SIG_IMG = os.path.join(ASSETS_DIR, "signature.png")
+STAMP_IMG = os.path.join(ASSETS_DIR, "stamp.png")
 
 IMG_W, IMG_H = 924, 1316
 S = 118
