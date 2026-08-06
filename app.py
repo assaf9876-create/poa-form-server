@@ -27,7 +27,8 @@ STAMP_IMG = os.path.join(ASSETS_DIR, "stamp.png")
 
 IMG_W, IMG_H = 924, 1316
 S = 118
-CN_SHIFT = 103
+CN_SHIFT_A = 75
+CN_SHIFT_B = 130
 OFFICE = 'סמי ביטון, רו"ח'
 
 
@@ -36,6 +37,8 @@ class CompanyData(BaseModel):
     company_number: str
     company_addr: str = ""
     date_str: str = ""
+    phone: str = ""
+    email: str = ""
 
 
 def make_transparent(inp, out, thr=200):
@@ -108,13 +111,13 @@ def fill_poa(data: CompanyData):
     - additional_pdf_base64: ייצוג נוסף (2279/6א)
     """
     try:
-        primary_bytes = fill_form(
-            FORM_PRIMARY, data.company_name, data.company_number,
-            data.company_addr, data.date_str or None,
-        )
-        additional_bytes = fill_form(
-            FORM_ADDITIONAL, data.company_name, data.company_number,
-            data.company_addr, data.date_str or None,
+primary_bytes = fill_form(
+    FORM_PRIMARY, data.company_name, data.company_number,
+    data.company_addr, data.date_str or None, data.phone, data.email,
+)
+additional_bytes = fill_form(
+    FORM_ADDITIONAL, data.company_name, data.company_number,
+    data.company_addr, data.date_str or None, data.phone, data.email,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
