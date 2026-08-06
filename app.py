@@ -110,14 +110,14 @@ def fill_poa(data: CompanyData):
     - primary_pdf_base64: ייצוג ראשי (2279/5א)
     - additional_pdf_base64: ייצוג נוסף (2279/6א)
     """
-    try:
-primary_bytes = fill_form(
-    FORM_PRIMARY, data.company_name, data.company_number,
-    data.company_addr, data.date_str or None, data.phone, data.email,
-)
-additional_bytes = fill_form(
-    FORM_ADDITIONAL, data.company_name, data.company_number,
-    data.company_addr, data.date_str or None, data.phone, data.email,
+ try:
+        primary_bytes = fill_form(
+            FORM_PRIMARY, data.company_name, data.company_number,
+            data.company_addr, data.date_str or None, data.phone, data.email,
+        )
+        additional_bytes = fill_form(
+            FORM_ADDITIONAL, data.company_name, data.company_number,
+            data.company_addr, data.date_str or None, data.phone, data.email,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
