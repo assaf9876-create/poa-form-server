@@ -1,7 +1,6 @@
 import io
 import os
 import base64
-import zipfile
 from datetime import date
 
 import numpy as np
@@ -49,14 +48,6 @@ def make_transparent(inp, out, thr=200):
     Image.fromarray(d, "RGBA").save(out)
 
 
-def extract_jpeg(zip_pdf_path):
-    with zipfile.ZipFile(zip_pdf_path, "r") as z:
-        for name in z.namelist():
-            if name.lower().endswith((".jpeg", ".jpg")):
-                return io.BytesIO(z.read(name))
-    raise FileNotFoundError("No JPEG in zip")
-
-
 def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_str=None, phone="", email=""):
     if not date_str:
         date_str = date.today().strftime("%d/%m/%Y")
@@ -97,10 +88,64 @@ def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_
         x, y = itp(618, 390)
         c.setFont("Heb", 9); c.drawString(x, y, company_addr[::-1])
 
+    if phone:
+        x, y = itp(400, 390)
+        c.setFont("Heb", 9); c.drawString(x, y, phone)
+
+    if email:
+        x, y = itp(618, 425)
+        c.setFont("Heb", 9); c.drawString(x, y, email[::-1])
+
+    x, y = itp(760 - S, 770)
+    c.setFont("Heb", 9); c.drawString(x, y, date_str)
+
+    x, y = itp(420 - CN_SHIFT_A, 758)
+    c.setFont("Heb", 7); c.drawString(x, y, company_name[::-1])
+
+    x, y = itp(420, 772)
+    c.setFont("Heb", 9); c.drawString(x, y, company_number)
+
+    sx0, syb, sx1, syt = irtp(340 - S, 740, 680 - S, 808)
+    c.drawImage(tmp_sig, sx0, syb, width=sx1 - sx0, height=syt - syb,
+                preserveAspectRatio=True, mask="auto")
+
+    # === סקשיין ב ===
+    for iy in [868, 913, 955]:
+        x, y = itp(698 - CN_SHIFT_B, iy)
+        c.setFont("Heb", 7); c.drawString(x, y, company_name[::-1])
+        x, y = itp(476, iy)
+        c.setFont("Heb", 9); c.drawString(x, y, company_number)
+
+    x, y = itp(760 - S, 1078)
+    c.setFont("Heb", 9); c.drawString(x, y, date_str)
+
+    x, y = itp(540 - S, 1078)
+    c.setFont("Heb", 9); c.drawString(x, y, OFFICE[::-1])
+
+    stx0, styb, stx1, styt = irtp(15 - S, 1020, 320 - S, 1100)
+    stx0 = max(stx0, 0)
+    c.drawImage(tmp_stamp, stx0, styb, width=stx1 - stx0, height=styt - styb,
+                preserveAspectRatio=True, mask="auto")
+
+    c.save(); packet.seek(0)
+
+    reader = PdfReader(base_pdf)
+    overlay = PdfReader(packet)
+    writer = PdfWriter()
+    page = reader.pages[0]
+    page.merge_page(overlay.pages[0])
+    writer.add_page(page)
+
+    out_buf = io.BytesIO()
+    writer.write(out_buf)
+    out_buf.seek(0)
+    return out_buf.read()
+
 
 @app.get("/")
 def health():
     return {"status": "ok"}
+
 
 @app.post("/fill-poa")
 def fill_poa(data: CompanyData):
