@@ -65,7 +65,7 @@ def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_
     make_transparent(SIG_IMG, tmp_sig)
     make_transparent(STAMP_IMG, tmp_stamp)
 
-with open(zip_pdf_path, "rb") as f:
+    with open(zip_pdf_path, "rb") as f:
         base_pdf = io.BytesIO(f.read())
     base_pdf.seek(0)
 
