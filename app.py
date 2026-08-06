@@ -110,7 +110,7 @@ def fill_poa(data: CompanyData):
     - primary_pdf_base64: ייצוג ראשי (2279/5א)
     - additional_pdf_base64: ייצוג נוסף (2279/6א)
     """
- try:
+try:
         primary_bytes = fill_form(
             FORM_PRIMARY, data.company_name, data.company_number,
             data.company_addr, data.date_str or None, data.phone, data.email,
@@ -121,7 +121,6 @@ def fill_poa(data: CompanyData):
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
     return {
         "primary_filename": f"ייצוג_ראשי_{data.company_name}.pdf",
         "primary_pdf_base64": base64.b64encode(primary_bytes).decode(),
