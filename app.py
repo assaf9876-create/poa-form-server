@@ -26,7 +26,7 @@ STAMP_IMG = os.path.join(ASSETS_DIR, "stamp.png")
 
 IMG_W, IMG_H = 924, 1316
 S = 118
-CN_SHIFT_A = 75
+CN_SHIFT_A = 20
 CN_SHIFT_B = 130
 OFFICE = 'סמי ביטון, רו"ח'
 
@@ -94,7 +94,7 @@ def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_
 
     if email:
         x, y = itp(618, 425)
-        c.setFont("Heb", 9); c.drawString(x, y, email[::-1])
+        c.setFont("Heb", 9); c.drawString(x, y, email)
 
     x, y = itp(760 - S, 770)
     c.setFont("Heb", 9); c.drawString(x, y, date_str)
