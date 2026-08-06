@@ -65,10 +65,8 @@ def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_
     make_transparent(SIG_IMG, tmp_sig)
     make_transparent(STAMP_IMG, tmp_stamp)
 
-    jpeg_bytes = extract_jpeg(zip_pdf_path)
-    img_obj = Image.open(jpeg_bytes)
-    base_pdf = io.BytesIO()
-    img_obj.save(base_pdf, format="PDF", resolution=150)
+with open(zip_pdf_path, "rb") as f:
+        base_pdf = io.BytesIO(f.read())
     base_pdf.seek(0)
 
     r0 = PdfReader(base_pdf)
