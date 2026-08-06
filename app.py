@@ -27,7 +27,7 @@ STAMP_IMG = os.path.join(ASSETS_DIR, "stamp.png")
 IMG_W, IMG_H = 924, 1316
 S = 118
 CN_SHIFT_A = 20
-CN_SHIFT_B = 130
+CN_SHIFT_B = 40
 OFFICE = 'סמי ביטון, רו"ח'
 
 
@@ -84,16 +84,18 @@ def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_
     x, y = itp(252, 336)
     c.setFont("Heb", 9); c.drawString(x, y, company_number)
 
+    # טלפון - עובר לשורה העליונה, בתיבה השמאלית ("–")
+    if phone:
+        x, y = itp(90, 336)
+        c.setFont("Heb", 9); c.drawString(x, y, phone)
+
     if company_addr:
         x, y = itp(618, 390)
         c.setFont("Heb", 9); c.drawString(x, y, company_addr[::-1])
 
-    if phone:
-        x, y = itp(400, 390)
-        c.setFont("Heb", 9); c.drawString(x, y, phone)
-
+    # מייל - אותה שורה כמו הכתובת, בצד שמאל ליד ה-@
     if email:
-        x, y = itp(618, 425)
+        x, y = itp(120, 390)
         c.setFont("Heb", 9); c.drawString(x, y, email)
 
     x, y = itp(760 - S, 770)
@@ -113,7 +115,7 @@ def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_
     for iy in [868, 913, 955]:
         x, y = itp(698 - CN_SHIFT_B, iy)
         c.setFont("Heb", 7); c.drawString(x, y, company_name[::-1])
-        x, y = itp(476, iy)
+        x, y = itp(460, iy + 15)
         c.setFont("Heb", 9); c.drawString(x, y, company_number)
 
     x, y = itp(760 - S, 1078)
