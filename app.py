@@ -112,11 +112,11 @@ def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_
                 preserveAspectRatio=True, mask="auto")
 
     # === סקשיין ב ===
-    # תיקון 1: מספר החברה בסקשיין ב' הועלה ב-0.5 ס"מ (22 יח' תמונה) - iy+15 -> iy-7
+    # תיקון: מספר החברה בסקשיין ב' הועלה בסה"כ ~1 ס"מ (44 יח' תמונה) - iy+15 -> iy-29
     for iy in [868, 913, 955]:
         x, y = itp(698 - CN_SHIFT_B, iy)
         c.setFont("Heb", 7); c.drawString(x, y, company_name[::-1])
-        x, y = itp(460, iy - 7)
+        x, y = itp(460, iy - 29)
         c.setFont("Heb", 9); c.drawString(x, y, company_number)
 
     x, y = itp(760 - S, 1078)
