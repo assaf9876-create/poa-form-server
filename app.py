@@ -48,7 +48,7 @@ def make_transparent(inp, out, thr=200):
     Image.fromarray(d, "RGBA").save(out)
 
 
-def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_str=None, phone="", email="", sec_b_offset=0):
+def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_str=None, phone="", email="", number_b_rel=15):
     if not date_str:
         date_str = date.today().strftime("%d/%m/%Y")
 
@@ -112,12 +112,12 @@ def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_
                 preserveAspectRatio=True, mask="auto")
 
     # === סקשיין ב ===
-    # תיקון: מספר החברה בסקשיין ב' הועלה בסה"כ ~1 ס"מ (44 יח' תמונה) - iy+15 -> iy-29
-    # sec_b_offset: כיול נפרד לטופס הנוסף בלבד (חצי ס"מ = 22 יח' תמונה; חיובי = למטה)
+    # number_b_rel: מיקום מספר החברה יחסית לשם החברה בכל שורה (ביחידות תמונה; שלילי = מעל השם)
+    # ברירת המחדל (15) היא המיקום המקורי (מספר מתחת לשם). לטופס הראשי כויל בנפרד ל- -29.
     for iy in [868, 913, 955]:
-        x, y = itp(698 - CN_SHIFT_B, iy + sec_b_offset)
+        x, y = itp(698 - CN_SHIFT_B, iy)
         c.setFont("Heb", 7); c.drawString(x, y, company_name[::-1])
-        x, y = itp(460, iy - 29 + sec_b_offset)
+        x, y = itp(460, iy + number_b_rel)
         c.setFont("Heb", 9); c.drawString(x, y, company_number)
 
     x, y = itp(760 - S, 1078)
@@ -162,11 +162,12 @@ def fill_poa(data: CompanyData):
         primary_bytes = fill_form(
             FORM_PRIMARY, data.company_name, data.company_number,
             data.company_addr, data.date_str or None, data.phone, data.email,
+            number_b_rel=-29,  # מכויל ומאושר - אל תשנה
         )
         additional_bytes = fill_form(
             FORM_ADDITIONAL, data.company_name, data.company_number,
             data.company_addr, data.date_str or None, data.phone, data.email,
-            sec_b_offset=22,  # טופס נוסף: שם/מספר חברה בסקשיין ב' חצי ס"מ יותר נמוך מהטופס הראשי
+            number_b_rel=15,  # ברירת מחדל מקורית - נכייל מחדש לפי בדיקה
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
