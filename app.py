@@ -48,7 +48,7 @@ def make_transparent(inp, out, thr=200):
     Image.fromarray(d, "RGBA").save(out)
 
 
-def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_str=None, phone="", email=""):
+def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_str=None, phone="", email="", sec_b_offset=0):
     if not date_str:
         date_str = date.today().strftime("%d/%m/%Y")
 
@@ -113,10 +113,11 @@ def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_
 
     # === סקשיין ב ===
     # תיקון: מספר החברה בסקשיין ב' הועלה בסה"כ ~1 ס"מ (44 יח' תמונה) - iy+15 -> iy-29
+    # sec_b_offset: כיול נפרד לטופס הנוסף בלבד (חצי ס"מ = 22 יח' תמונה; חיובי = למטה)
     for iy in [868, 913, 955]:
-        x, y = itp(698 - CN_SHIFT_B, iy)
+        x, y = itp(698 - CN_SHIFT_B, iy + sec_b_offset)
         c.setFont("Heb", 7); c.drawString(x, y, company_name[::-1])
-        x, y = itp(460, iy - 29)
+        x, y = itp(460, iy - 29 + sec_b_offset)
         c.setFont("Heb", 9); c.drawString(x, y, company_number)
 
     x, y = itp(760 - S, 1078)
@@ -165,6 +166,7 @@ def fill_poa(data: CompanyData):
         additional_bytes = fill_form(
             FORM_ADDITIONAL, data.company_name, data.company_number,
             data.company_addr, data.date_str or None, data.phone, data.email,
+            sec_b_offset=22,  # טופס נוסף: שם/מספר חברה בסקשיין ב' חצי ס"מ יותר נמוך מהטופס הראשי
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
