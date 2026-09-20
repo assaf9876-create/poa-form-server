@@ -48,7 +48,9 @@ def make_transparent(inp, out, thr=200):
     Image.fromarray(d, "RGBA").save(out)
 
 
-def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_str=None, phone="", email="", number_b_rel=15):
+def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_str=None, phone="", email="", number_b_rel=15, iy_list=None):
+    if iy_list is None:
+        iy_list = [868, 913, 955]
     if not date_str:
         date_str = date.today().strftime("%d/%m/%Y")
 
@@ -114,7 +116,7 @@ def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_
     # === סקשיין ב ===
     # number_b_rel: מיקום מספר החברה יחסית לשם החברה בכל שורה (ביחידות תמונה; שלילי = מעל השם)
     # ברירת המחדל (15) היא המיקום המקורי (מספר מתחת לשם). לטופס הראשי כויל בנפרד ל- -29.
-    for iy in [868, 913, 955]:
+    for iy in iy_list:
         x, y = itp(698 - CN_SHIFT_B, iy)
         c.setFont("Heb", 7); c.drawString(x, y, company_name[::-1])
         x, y = itp(460, iy + number_b_rel)
@@ -163,6 +165,7 @@ def fill_poa(data: CompanyData):
             FORM_PRIMARY, data.company_name, data.company_number,
             data.company_addr, data.date_str or None, data.phone, data.email,
             number_b_rel=44,  # מספר החברה כ-1 ס"מ מתחת לשם החברה
+            iy_list=[824, 868, 913],  # הועלה שורה אחת: מתמלא בשורה ראשונה-שלישית (לא שנייה-רביעית)
         )
         additional_bytes = fill_form(
             FORM_ADDITIONAL, data.company_name, data.company_number,
