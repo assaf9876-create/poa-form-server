@@ -162,7 +162,7 @@ def fill_poa(data: CompanyData):
         primary_bytes = fill_form(
             FORM_PRIMARY, data.company_name, data.company_number,
             data.company_addr, data.date_str or None, data.phone, data.email,
-            number_b_rel=-29,  # מכויל ומאושר - אל תשנה
+            number_b_rel=0,  # מספר החברה באותו גובה כמו שם החברה
         )
         additional_bytes = fill_form(
             FORM_ADDITIONAL, data.company_name, data.company_number,
