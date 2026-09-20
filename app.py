@@ -48,7 +48,7 @@ def make_transparent(inp, out, thr=200):
     Image.fromarray(d, "RGBA").save(out)
 
 
-def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_str=None, phone="", email="", number_b_rel=15, iy_list=None):
+def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_str=None, phone="", email="", number_b_rel=15, name_b_rel=0, iy_list=None):
     if iy_list is None:
         iy_list = [868, 913, 955]
     if not date_str:
@@ -117,7 +117,7 @@ def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_
     # number_b_rel: מיקום מספר החברה יחסית לשם החברה בכל שורה (ביחידות תמונה; שלילי = מעל השם)
     # ברירת המחדל (15) היא המיקום המקורי (מספר מתחת לשם). לטופס הראשי כויל בנפרד ל- -29.
     for iy in iy_list:
-        x, y = itp(698 - CN_SHIFT_B, iy)
+        x, y = itp(698 - CN_SHIFT_B, iy + name_b_rel)
         c.setFont("Heb", 7); c.drawString(x, y, company_name[::-1])
         x, y = itp(460, iy + number_b_rel)
         c.setFont("Heb", 9); c.drawString(x, y, company_number)
@@ -165,6 +165,7 @@ def fill_poa(data: CompanyData):
             FORM_PRIMARY, data.company_name, data.company_number,
             data.company_addr, data.date_str or None, data.phone, data.email,
             number_b_rel=44,  # מספר החברה כ-1 ס"מ מתחת לשם החברה
+            name_b_rel=44,  # שם החברה מיושר לאותו גובה כמו מספר החברה
             iy_list=[824, 868, 913],  # הועלה שורה אחת: מתמלא בשורה ראשונה-שלישית (לא שנייה-רביעית)
         )
         additional_bytes = fill_form(
