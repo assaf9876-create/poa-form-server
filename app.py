@@ -48,7 +48,7 @@ def make_transparent(inp, out, thr=200):
     Image.fromarray(d, "RGBA").save(out)
 
 
-def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_str=None, phone="", email="", number_b_rel=15, name_b_rel=0, iy_list=None):
+def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_str=None, phone="", email="", number_b_rel=15, name_b_rel=0, iy_list=None, skip_name_first=False):
     if iy_list is None:
         iy_list = [868, 913, 955]
     if not date_str:
@@ -115,10 +115,12 @@ def fill_form(zip_pdf_path, company_name, company_number, company_addr="", date_
 
     # === סקשיין ב ===
     # number_b_rel: מיקום מספר החברה יחסית לשם החברה בכל שורה (ביחידות תמונה; שלילי = מעל השם)
-    # ברירת המחדל (15) היא המיקום המקורי (מספר מתחת לשם). לטופס הראשי כויל בנפרד ל- -29.
-    for iy in iy_list:
-        x, y = itp(698 - CN_SHIFT_B, iy + name_b_rel)
-        c.setFont("Heb", 7); c.drawString(x, y, company_name[::-1])
+    # שורה ראשונה ("מספר התיק לגביו חל ייפוי הכוח") היא שדה בודד בלי שורת "שם" צמודה -
+    # אם skip_name_first=True לא מציירים שם חברה שם (זה היה נשפך על כותרת הסעיף).
+    for idx, iy in enumerate(iy_list):
+        if not (skip_name_first and idx == 0):
+            x, y = itp(698 - CN_SHIFT_B, iy + name_b_rel)
+            c.setFont("Heb", 7); c.drawString(x, y, company_name[::-1])
         x, y = itp(460, iy + number_b_rel)
         c.setFont("Heb", 9); c.drawString(x, y, company_number)
 
@@ -167,6 +169,7 @@ def fill_poa(data: CompanyData):
             number_b_rel=44,  # מספר החברה כ-1 ס"מ מתחת לשם החברה
             name_b_rel=44,  # שם החברה מיושר לאותו גובה כמו מספר החברה
             iy_list=[824, 868, 913],  # הועלה שורה אחת: מתמלא בשורה ראשונה-שלישית (לא שנייה-רביעית)
+            skip_name_first=True,  # בשורה הראשונה אין שדה "שם" - רק מספר תיק
         )
         additional_bytes = fill_form(
             FORM_ADDITIONAL, data.company_name, data.company_number,
